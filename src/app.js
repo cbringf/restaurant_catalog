@@ -4,6 +4,7 @@ const compress = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
 const logger = require('./logger');
+const seeder = require('feathers-seeder');
 
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
@@ -15,6 +16,7 @@ const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
 const channels = require('./channels');
+const seederConfig = require('./seeder.config');
 
 const authentication = require('./authentication');
 
@@ -22,6 +24,7 @@ const app = express(feathers());
 
 // Load app configuration
 app.configure(configuration());
+app.configure(seeder(seederConfig));
 // Enable security, CORS, compression, favicon and body parsing
 app.use(helmet());
 app.use(cors());
@@ -49,5 +52,7 @@ app.use(express.notFound());
 app.use(express.errorHandler({ logger }));
 
 app.hooks(appHooks);
+
+app.seed();
 
 module.exports = app;
